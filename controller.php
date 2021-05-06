@@ -5,11 +5,9 @@ require_once 'model.php';
 
 class Controller
 {
-   public $input_array;
-
    public function __construct()
    {
-    
+          
    }
 
     // the method below checks if an array has array inside
@@ -25,9 +23,9 @@ class Controller
     }
 
     // the method below create one array that contains all arrays inside, in one line
-    public function one_line_array_maker() 
+    public function one_line_array_maker($model_object) 
     {
-        $inputs = $this->get_array(new Model);
+        $inputs = $this->get_array($model_object);
         foreach ($inputs as $position => $input) {
         
             if (is_array($input) && $this->next_element($input)) { // case with multydimentional array
@@ -52,9 +50,9 @@ class Controller
     }
 
     // the code below creates array with unique values for row_pattern
-    public function flatten() 
+    public function flatten($model_object) 
     {
-        $arrays = $this->get_array(new Model);
+        $arrays = $this->get_array($model_object);
         $return = array();
         array_walk_recursive($arrays, function($value, $key) use (&$return) { $return[] = $key; });
         // the code below creates array with unique values
@@ -66,8 +64,8 @@ class Controller
 
     // as argument it grabs arrays in one_level_array 
     // the method below to bypass all arrays
-    public function bypass_array( $one_array) {
-        $row_pattern = $this->flatten();
+    public function bypass_array($model_object, $one_array) {
+        $row_pattern = $this->flatten($model_object);
         foreach($row_pattern as $value) {
             if(array_key_exists($value, $one_array)) {
             $ordered_array[$value] = $one_array[$value];
@@ -80,10 +78,11 @@ class Controller
     }
 
     // method  below organizes handling of one_line_array
-    public function crawl_main_array() 
-    {   $one_line_array = $this->one_line_array_maker();
+    public function crawl_main_array($model_object) 
+    {  
+        $one_line_array = $this->one_line_array_maker($model_object);
         foreach ($one_line_array as $one_array) {
-            $pre_configured_arrays[] = $this->bypass_array( $one_array);
+            $pre_configured_arrays[] = $this->bypass_array($model_object, $one_array);
             
         }
         return $pre_configured_arrays;
